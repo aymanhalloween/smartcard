@@ -10,8 +10,9 @@ This MVP creates a virtual card (via Stripe Issuing) that acts as a single inter
 
 ### Backend (Node.js/Express)
 - **Stripe Issuing Integration**: Creates virtual cards and enables Apple Wallet provisioning
-- **Transaction Routing**: Simple MCC-based logic to select the best card
-- **Webhook Handler**: Processes Stripe transaction events
+- **Smart Transaction Routing**: Real-time MCC-based routing with authorization approval/decline
+- **Webhook Handler**: Processes Stripe authorization events and routes to real cards
+- **Payment Processing**: Charges selected real cards and manages transaction flow
 - **Supabase Integration**: User auth and card storage
 
 ### Frontend (iOS SwiftUI)
@@ -138,10 +139,14 @@ smart-card-mvp/
 
 ### Backend Testing
 ```bash
-# Test webhook
+# Test smart routing with comprehensive test suite
+cd backend
+npm run test-routing
+
+# Test individual authorization webhook
 curl -X POST http://localhost:3001/api/webhook \
   -H "Content-Type: application/json" \
-  -d '{"type": "issuing_transaction.created", "data": {"object": {"id": "txn_test", "amount": 2500, "currency": "usd", "merchant_data": {"mcc": "5812", "name": "Starbucks"}}}}'
+  -d '{"type": "issuing_authorization.created", "data": {"object": {"id": "iauth_test", "amount": 2500, "currency": "usd", "merchant_data": {"mcc": "5812", "name": "Starbucks"}, "status": "pending"}}}'
 
 # Test card creation
 curl -X POST http://localhost:3001/api/create-virtual-card \

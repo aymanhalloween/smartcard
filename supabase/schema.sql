@@ -43,6 +43,8 @@ CREATE TABLE IF NOT EXISTS public.transaction_routes (
     mcc TEXT,
     merchant_name TEXT,
     routed_to_card TEXT NOT NULL,
+    status TEXT DEFAULT 'pending', -- 'approved', 'declined', 'pending'
+    payment_intent_id TEXT, -- Store the real card payment intent ID
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
